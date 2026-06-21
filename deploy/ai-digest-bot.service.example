@@ -1,0 +1,21 @@
+# systemd unit for the on-demand summarize bot (long-polling).
+# Copy to /etc/systemd/system/ai-digest-bot.service, fix the paths,
+# then: systemctl daemon-reload && systemctl enable --now ai-digest-bot
+[Unit]
+Description=AI Digest Telegram summarize bot (long-polling)
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=simple
+WorkingDirectory=/opt/ai-digest
+Environment=PYTHONUNBUFFERED=1
+EnvironmentFile=/opt/ai-digest/secrets.env
+ExecStart=/opt/ai-digest/venv/bin/python /opt/ai-digest/bot.py
+Restart=always
+RestartSec=5
+StandardOutput=append:/opt/ai-digest/bot.log
+StandardError=append:/opt/ai-digest/bot.log
+
+[Install]
+WantedBy=multi-user.target
